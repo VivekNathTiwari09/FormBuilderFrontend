@@ -1,4 +1,4 @@
-import React from "react";
+
 import { useFormContext, Controller } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -156,7 +156,7 @@ export const SliderField = ({ question, name }: FieldProps) => {
               max={max} 
               step={step} 
               value={[field.value ?? min]} 
-              onValueChange={(vals) => field.onChange(vals[0])} 
+              onValueChange={(vals: any) => field.onChange(vals[0])} 
               className="flex-1"
             />
             <span className="text-sm font-medium">{max}</span>

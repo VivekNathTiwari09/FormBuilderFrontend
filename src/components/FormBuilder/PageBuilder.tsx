@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,7 +6,7 @@ import { SectionBuilder } from "./SectionBuilder";
 import { GripVertical, Edit2, Trash2, X } from "lucide-react";
 
 export const PageBuilder = ({ pageIndex, removePage }: { pageIndex: number; removePage: () => void }) => {
-  const { register, control, watch, setValue } = useFormContext();
+  const { control, watch, setValue } = useFormContext();
   const fieldName = `pages.${pageIndex}`;
   const { fields, append, remove } = useFieldArray({
     control,

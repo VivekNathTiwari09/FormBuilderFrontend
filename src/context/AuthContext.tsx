@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { apiClient } from '../api/client';
-import { useLogin } from '../api/hooks';
+
 
 interface User {
-  userid: int;
+  userid: number;
   email: string;
   fullname: string;
   role: string;

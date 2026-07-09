@@ -23,7 +23,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({ formConfig, onSubmit
              if (q.isrequired) fieldSchema = fieldSchema.min(1, "This field is required");
              else fieldSchema = fieldSchema.optional();
           } else if (q.questiontypeid === 3 || q.questiontypeid === 7) {
-             fieldSchema = z.number({ invalid_type_error: "Must be a number" });
+             fieldSchema = z.coerce.number();
              if (!q.isrequired) fieldSchema = fieldSchema.optional();
           } else if (q.questiontypeid === 5) { // Checkbox array
              fieldSchema = z.array(z.string());

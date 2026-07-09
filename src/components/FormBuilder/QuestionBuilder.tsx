@@ -1,11 +1,11 @@
-import React from "react";
+
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Edit2, Trash2, GripVertical, X } from "lucide-react";
+import { Trash2, X } from "lucide-react";
 
 export const QuestionBuilder = ({ sectionIndex, pageIndex, qIndex, removeQuestion }: { sectionIndex: number; pageIndex: number; qIndex: number; removeQuestion: () => void }) => {
   const { register, control, watch, setValue } = useFormContext();

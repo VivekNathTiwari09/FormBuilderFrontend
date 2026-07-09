@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,7 +6,7 @@ import { QuestionBuilder } from "./QuestionBuilder";
 import { Trash2, Edit2, X } from "lucide-react";
 
 export const SectionBuilder = ({ sectionIndex, pageIndex, removeSection }: { sectionIndex: number; pageIndex: number; removeSection: () => void }) => {
-  const { register, control, watch, setValue } = useFormContext();
+  const { control, watch, setValue } = useFormContext();
   const fieldName = `pages.${pageIndex}.sections.${sectionIndex}`;
   const { fields, append, remove } = useFieldArray({
     control,

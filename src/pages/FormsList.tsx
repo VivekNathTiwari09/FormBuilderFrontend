@@ -1,10 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useGetForms, usePublishForm } from '../api/hooks';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
-import { Search, MoreVertical, ChevronLeft, ChevronRight, Edit2, Eye, CheckCircle } from 'lucide-react';
+import { Search, MoreVertical, Edit2, Eye, CheckCircle } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const StatusBadge = ({ iscurrentversion, formstatusid }: { iscurrentversion: boolean, formstatusid: number }) => {
+const StatusBadge = ({ formstatusid }: { formstatusid: number }) => {
   if (formstatusid === 2) {
     return <span className="px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-100 text-emerald-700 border border-emerald-200">Published</span>;
   }
@@ -115,12 +115,13 @@ const FormsList = () => {
               <TableRow key={form.formid} className="border-b-gray-50 hover:bg-gray-50/50">
                 <TableCell className="font-medium text-gray-900 py-4">{form.formtitle}</TableCell>
                 <TableCell>
-                  <StatusBadge iscurrentversion={form.iscurrentversion} formstatusid={form.formstatusid} />
+                  <StatusBadge formstatusid={form.formstatusid} />
                 </TableCell>
                 <TableCell className="text-center text-gray-600">0</TableCell>
                 <TableCell className="text-center text-gray-600">{form.versionnumber}</TableCell>
                 <TableCell className="text-center">
                   <DropdownMenu>
+                    {/* @ts-ignore */}
                     <DropdownMenuTrigger asChild>
                       <button className="p-2 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition-colors">
                         <MoreVertical size={18} />
