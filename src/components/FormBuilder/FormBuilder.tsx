@@ -9,10 +9,11 @@ import { Plus, X } from "lucide-react";
 interface FormBuilderProps {
   initialData?: any;
   onSubmit: (data: any) => void;
-  onPreview?: () => void;
+  onPreview?: (data: any) => void;
+  onChange?: (data: any) => void;
 }
 
-export const FormBuilder: React.FC<FormBuilderProps> = ({ initialData, onSubmit, onPreview }) => {
+export const FormBuilder: React.FC<FormBuilderProps> = ({ initialData, onSubmit, onPreview, onChange }) => {
   const methods = useForm({
     defaultValues: initialData || {
       formcode: "",
@@ -28,17 +29,42 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ initialData, onSubmit,
     }
   }, [initialData, methods]);
 
+  React.useEffect(() => {
+    const subscription = methods.watch(() => {
+      if (onChange) onChange(methods.getValues());
+    });
+    return () => subscription.unsubscribe();
+  }, [methods.watch, onChange, methods]);
+
   const { register, control, handleSubmit } = methods;
   const { fields, append, remove } = useFieldArray({
     control,
     name: "pages"
   });
 
-  const onSave = (data: any) => {
+  const normalizeFormPayload = (data: any) => {
     // Generate simple codes if not present
     if (!data.formcode) {
         data.formcode = data.formtitle.toUpperCase().replace(/\s+/g, '_');
     }
+    
+    // Clean up empty strings for numeric fields to prevent 422 errors
+    data.pages?.forEach((page: any) => {
+      page.sections?.forEach((section: any) => {
+        section.questions?.forEach((q: any) => {
+          if (q.minvalue === "") q.minvalue = null;
+          if (q.maxvalue === "") q.maxvalue = null;
+          if (q.increment === "") q.increment = null;
+          if (q.maxscore === "") q.maxscore = null;
+        });
+      });
+    });
+
+    return data;
+  };
+
+  const onSave = (data: any) => {
+    data = normalizeFormPayload(data);
     onSubmit(data);
   };
 
@@ -137,7 +163,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ initialData, onSubmit,
               type="button" 
               variant="outline" 
               className="text-gray-700 border-gray-300 hover:bg-gray-50 font-medium px-6"
-              onClick={onPreview}
+              onClick={handleSubmit((data) => onPreview && onPreview(normalizeFormPayload(data)))}
             >
               Preview
             </Button>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FormBuilder } from '../components/FormBuilder/FormBuilder';
 import { FormRenderer } from '../components/FormRenderer/FormRenderer';
+import Responses from './Responses';
 import { useNavigate, Link, useParams, useSearchParams } from 'react-router-dom';
 import { useCreateForm, useUpdateForm, useGetFormById, useSubmitResponse } from '../api/hooks';
 import { Button } from '@/components/ui/button';
@@ -19,6 +20,7 @@ const CreateFormPage = () => {
 
   const [activeTab, setActiveTab] = useState('Builder');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [previewData, setPreviewData] = useState<any>(null);
 
   useEffect(() => {
     const tab = searchParams.get('tab');
@@ -51,6 +53,26 @@ const CreateFormPage = () => {
         }
       });
     }
+  };
+
+  const handlePreview = (data: any) => {
+    if (id) {
+      setPreviewData(data);
+      setActiveTab('Preview');
+      return;
+    }
+
+    createFormMutation.mutate(data, {
+      onSuccess: (createdForm) => {
+        setPreviewData(createdForm);
+        setActiveTab('Preview');
+        navigate(`/forms/${createdForm.formid}?tab=Preview`, { replace: true });
+      },
+      onError: (error) => {
+        console.error("Failed to create form before preview", error);
+        alert("Error saving form before preview");
+      }
+    });
   };
 
   const tabs = ['Summary', 'Builder', 'Preview', 'Responses', 'Settings'];
@@ -130,11 +152,16 @@ const CreateFormPage = () => {
       <div className="flex-1 p-8">
         <div className="max-w-5xl mx-auto bg-white rounded-xl shadow-sm border border-gray-100 min-h-[600px]">
           <div className={activeTab === 'Builder' ? 'block' : 'hidden'}>
-            <FormBuilder onSubmit={handleCreateForm} initialData={form} onPreview={() => setActiveTab('Preview')} />
+            <FormBuilder 
+              onSubmit={handleCreateForm} 
+              initialData={form} 
+              onChange={(data) => setPreviewData(data)}
+              onPreview={handlePreview} 
+            />
           </div>
           {activeTab === 'Preview' && (
-            form ? (
-              <FormRenderer formConfig={form} onSubmit={(data) => {
+            (previewData || form) ? (
+              <FormRenderer formConfig={previewData || form} onSubmit={(data) => {
                 submitResponseMutation.mutate(data, {
                   onSuccess: () => setShowSuccessModal(true),
                   onError: (err) => {
@@ -147,7 +174,10 @@ const CreateFormPage = () => {
               <div className="p-8 text-center text-gray-500">Please save the form before previewing.</div>
             )
           )}
-          {['Summary', 'Responses', 'Settings'].includes(activeTab) && (
+          {activeTab === 'Responses' && id && (
+            <Responses formId={Number(id)} />
+          )}
+          {['Summary', 'Settings'].includes(activeTab) && (
             <div className="p-8 text-center text-gray-500">{activeTab} view coming soon...</div>
           )}
         </div>

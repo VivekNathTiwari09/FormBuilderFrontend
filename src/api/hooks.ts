@@ -23,6 +23,17 @@ export const useGetFormById = (formId: number) => {
   });
 };
 
+export const useGetFormResponses = (formId?: number) => {
+  return useQuery({
+    queryKey: ['forms', formId, 'responses'],
+    queryFn: async () => {
+      const { data } = await apiClient.get(`/forms/${formId}/responses`);
+      return data;
+    },
+    enabled: !!formId,
+  });
+};
+
 export const useCreateForm = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -64,10 +75,14 @@ export const usePublishForm = () => {
 };
 // Responses Hooks
 export const useSubmitResponse = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (responseData: any) => {
       const { data } = await apiClient.post('/responses/', responseData);
       return data;
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['forms', variables.formid, 'responses'] });
     },
   });
 };
